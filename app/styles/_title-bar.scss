@@ -1,0 +1,111 @@
+$barSize: 120px;
+$smallBarSize: 80px;
+
+.title-bar {
+  width: 100%;
+  height: $barSize;
+  @media screen and (max-width: 768px) {
+    height: $smallBarSize;
+  }
+  position: absolute;
+  -webkit-perspective: 1500px;
+  -webkit-transform: translateY( -50% );
+  top: 50%;
+  &:hover {
+    .title-bar__next {
+      right: 20px;
+    }
+    .title-bar__prev {
+      left: 20px;
+    }
+  }
+}
+
+.title-bar__bg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  -webkit-transform-style: preserve-3d;
+  -webkit-transition: -webkit-transform 0.25s ease-in-out;
+
+  figure {
+    position: absolute;
+    width:100%;
+    height: $barSize;
+    margin: 0;
+    line-height: $barSize;
+    @media screen and (max-width: 768px) {
+      height: $smallBarSize;
+      line-height: $smallBarSize;
+      font-size: 32px;
+    }
+    text-align: center;
+    font-size: 45px;
+    color: #8A9DA4;
+    background-color: #EBEFF0;
+    // -webkit-transition: background-color 0.25s ease-in-out;
+    -webkit-backface-visibility: hidden;
+
+    -webkit-transform: translateZ( -$barSize/2 );
+    @media screen and (max-width: 768px) {
+      -webkit-transform: translateZ( -$smallBarSize/2 );
+
+    }
+  }
+ .title-bar--front  {
+    -webkit-transform: translateZ( $barSize/2 );
+    @media screen and (max-width: 768px) {
+      -webkit-transform: translateZ( $smallBarSize/2 );
+    }
+  }
+ .title-bar--top {
+    -webkit-transform: rotateX( 90deg ) translateZ( $barSize/2 ) ;
+    @media screen and (max-width: 768px) {
+      -webkit-transform: rotateX( 90deg ) translateZ( $smallBarSize/2 ) ;
+    }
+  }
+  &.title-bar--show-top {
+    -webkit-transform: translateZ( -$barSize/2 ) rotateX( -90deg );
+    @media screen and (max-width: 768px) {
+      -webkit-transform: translateZ( -$smallBarSize/2 ) rotateX( -90deg );
+    }
+    figure {
+      background-color: #fff;
+
+    }
+  }
+}
+
+.title-bar__title {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.title-bar__prev, .title-bar__next {
+  position: absolute;
+  width: 100px;
+  height: 100%;
+  cursor: pointer;
+  background-color: #EBEFF0;
+  -webkit-transition: background-color 0.25s ease-in-out;
+  &:hover {
+    background-color: #fff;
+    -webkit-transition: background-color 0.25s ease-in-out;
+  }
+}
+.title-bar__next {
+
+  right: -100px;
+  -webkit-transition: right 0.25s ease-in-out;
+}
+
+.title-bar__prev {
+  left: -100px;
+  -webkit-transition: left 0.25s ease-in-out;
+}
+.title-bar__chevron {
+  width: 32px;
+  height: 32px;
+  fill: #8A9DA4;
+}

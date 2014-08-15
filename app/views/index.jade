@@ -1,0 +1,33 @@
+doctype
+html
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+    title
+      | Whitecaps
+    meta(name='viewport', content='width=device-width')
+    link(rel='shortcut icon', type="image/x-icon", href='/favicon.ico')
+    link(rel='stylesheet', href='app.css')
+    script(src='vendor.min.js')
+
+  body(ng-app="whitecaps")
+    container
+      section(ng-controller="white")
+        .control-bars
+          slider(ng-repeat="bar in bars", model="bar", active="setActive(bar.name)", deactive="setActive('')")
+
+        .title-bar
+          .title-bar__bg(ng-class="{'title-bar--show-top': active != ''}")
+            figure.title-bar--front
+              .title-bar__prev
+                svg(xmlns="http://www.w3.org/2000/svg", viewBox="0 0 8 8", class="title-bar__chevron")
+                  path(d="M4 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z", transform="translate(1)")
+              .title-bar__title white
+              .title-bar__next
+                svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 8 8', class="title-bar__chevron")
+                  path(d='M1.5 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z', transform='translate(1)' )
+
+            figure.title-bar--top
+              span.title-bar__title {{ active }}
+
+    script(src='app.js')
