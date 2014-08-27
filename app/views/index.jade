@@ -11,9 +11,9 @@ html
     script(src='vendor.min.js')
 
   body(ng-app="whitecaps")
-    container
-      section(ng-controller="white")
-        .control-bars
+    .container(ng-controller="container" ng-class="currentSection")
+      section(ng-controller="noise" class="noise")
+        .control-bar
           slider(ng-repeat="bar in bars", model="bar", active="setActive(bar.name)", deactive="setActive('')")
 
         .title-bar
@@ -22,12 +22,43 @@ html
               .title-bar__prev
                 svg(xmlns="http://www.w3.org/2000/svg", viewBox="0 0 8 8", class="title-bar__chevron")
                   path(d="M4 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z", transform="translate(1)")
-              .title-bar__title white
+              .title-bar__title noise
               .title-bar__next
                 svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 8 8', class="title-bar__chevron")
                   path(d='M1.5 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z', transform='translate(1)' )
 
             figure.title-bar--top
               span.title-bar__title {{ active }}
+
+      section(ng-controller="hum" class="hum")
+        .control-bar
+          slider(ng-repeat="bar in bars", model="bar", active="setActive(bar.name)", deactive="setActive('')")
+
+        .title-bar
+          .title-bar__bg(ng-class="{'title-bar--show-top': active != ''}")
+            figure.title-bar--front
+              .title-bar__prev
+                svg(xmlns="http://www.w3.org/2000/svg", viewBox="0 0 8 8", class="title-bar__chevron")
+                  path(d="M4 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z", transform="translate(1)")
+              .title-bar__title hum
+              .title-bar__next
+                svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 8 8', class="title-bar__chevron")
+                  path(d='M1.5 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z', transform='translate(1)' )
+
+            figure.title-bar--top
+              span.title-bar__title {{ active }}
+
+      nav
+        ul
+          li.home
+            a.circle
+          li.noise
+            a.circle
+          li.hum
+            a.circle
+          li.effects
+            a.circle
+          li.effects
+            a.circle
 
     script(src='app.js')

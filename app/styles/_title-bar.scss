@@ -11,12 +11,19 @@ $smallBarSize: 80px;
   -webkit-perspective: 1500px;
   -webkit-transform: translateY( -50% );
   top: 50%;
+
   &:hover {
     .title-bar__next {
+      -webkit-transition: background-color $animation-speed, right $animation-speed, opacity $animation-speed;
       right: 20px;
+      opacity:1;
+
     }
     .title-bar__prev {
+      -webkit-transition: background-color $animation-speed, left $animation-speed, opacity $animation-speed;
       left: 20px;
+      opacity: 1;
+
     }
   }
 }
@@ -26,7 +33,7 @@ $smallBarSize: 80px;
   height: 100%;
   position: absolute;
   -webkit-transform-style: preserve-3d;
-  -webkit-transition: -webkit-transform 0.25s ease-in-out;
+  -webkit-transition: -webkit-transform $animation-speed;
 
   figure {
     position: absolute;
@@ -37,13 +44,10 @@ $smallBarSize: 80px;
     @media screen and (max-width: 768px) {
       height: $smallBarSize;
       line-height: $smallBarSize;
-      font-size: 32px;
+      font-size: 2em;
     }
     text-align: center;
-    font-size: 45px;
-    color: #8A9DA4;
-    background-color: #EBEFF0;
-    // -webkit-transition: background-color 0.25s ease-in-out;
+    font-size: 3em;
     -webkit-backface-visibility: hidden;
 
     -webkit-transform: translateZ( -$barSize/2 );
@@ -69,43 +73,76 @@ $smallBarSize: 80px;
     @media screen and (max-width: 768px) {
       -webkit-transform: translateZ( -$smallBarSize/2 ) rotateX( -90deg );
     }
-    figure {
-      background-color: #fff;
-
-    }
   }
 }
+.title-bar__prev, .title-bar__next {
+  position: absolute;
+  width: 100px;
+  height: 100%;
+  cursor: pointer;
+  opacity: 0;
+  z-index: 100;
+}
+.title-bar__next {
+  right: -100px;
+  -webkit-transition: background-color $animation-speed, right $animation-speed, opacity $animation-speed;
+}
 
+.title-bar__prev {
+  left: -100px;
+  -webkit-transition: background-color $animation-speed, left $animation-speed, opacity $animation-speed;
+}
 .title-bar__title {
   position: absolute;
   left: 0;
   right: 0;
 }
 
-.title-bar__prev, .title-bar__next {
-  position: absolute;
-  width: 100px;
-  height: 100%;
-  cursor: pointer;
-  background-color: #EBEFF0;
-  -webkit-transition: background-color 0.25s ease-in-out;
-  &:hover {
-    background-color: #fff;
-    -webkit-transition: background-color 0.25s ease-in-out;
-  }
-}
-.title-bar__next {
-
-  right: -100px;
-  -webkit-transition: right 0.25s ease-in-out;
-}
-
-.title-bar__prev {
-  left: -100px;
-  -webkit-transition: left 0.25s ease-in-out;
-}
 .title-bar__chevron {
   width: 32px;
   height: 32px;
-  fill: #8A9DA4;
+}
+
+.noise {
+  .title-bar__bg{
+     figure {
+      color: $noise;
+      background-color: $noise-faded;
+    }
+    &.title-bar--show-top figure {
+      background-color: $white;
+    }
+  }
+  .title-bar__prev, .title-bar__next {
+    background-color: $noise-faded;
+    &:hover {
+      -webkit-transition: background-color $animation-speed;
+      background-color: $white;
+    }
+  }
+  .title-bar__chevron {
+    fill: $noise;
+  }
+}
+
+.hum {
+  .title-bar__bg{
+     figure {
+      color: $hum;
+      background-color: $hum-faded;
+    }
+    &.title-bar--show-top figure {
+      background-color: $white;
+    }
+  }
+  .title-bar__prev, .title-bar__next {
+    background-color: $hum-faded;
+    &:hover {
+      -webkit-transition: background-color $animation-speed;
+      background-color: $white;
+    }
+  }
+  .title-bar__chevron {
+    fill: $hum;
+  }
 }

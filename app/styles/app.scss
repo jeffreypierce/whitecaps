@@ -1,72 +1,75 @@
+// Colors
+$white: #FFFFFF;
+$noise: #F4B5BD;
+$noise-faded: #FCF0F1;
+
+$hum: #E9C141;
+$hum-faded: #FAF2D9;
+
+$animation-speed: 0.3s ease-in-out;
+
 @import "fonts";
 @import "dial";
+@import "slider";
 @import "title-bar";
 
 body {
-  background-color: #9FAFB5;
   font-family: 'novecento_sans_widedemibold';
   margin: 0;
   -webkit-box-sizing: border-box;
 
 }
 .container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  height:100%;
-  width: 100%;
-  -webkit-transform-style: preserve-3d;
-}
 
-.control-bars {
-  position: absolute;
-  -webkit-transform: translateY( -50% ) translateX( -50% );
-  top: 50%;
-  left: 50%;
-  width: 480px;
-  @media screen and (max-width: 768px) {
-    width: 320px;
-  }
-
-}
-
-
-.slider {
-  position: relative;
-  width: 120px;
-  float: left;
-  height: 600px;
-  -webkit-transition: background-color 0.25s ease-in-out;
-  @media screen and (max-width: 768px) {
-    height: 400px;
-    width: 80px;
-  }
-  &.active {
-    background-color: rgba(255, 255, 255, 0.1);
-
-    .slider__handle-min, .slider__handle-max {
-      background-color: #FFFFFF;
+  &.hum {
+    section.hum {
+      left: 0;
+    }
+    section.noise {
+      left: -100%;
     }
   }
 }
 
-.slider__handle-min, .slider__handle-max {
-  -webkit-transition: background-color 0.25s ease-in-out;
-  background-color: #EBEFF0;
+section {
+  overflow: hidden;
   position: absolute;
-  width: 100%;
-}
-
-.slider__handle-max {
   top: 0;
-  bottom: 50%;
-}
-
-.slider__handle-min{
-  top: 50%;
   bottom: 0;
+  width: 100%;
+  -webkit-transition: left $animation-speed;
+  &.hum {
+    background-color: $hum;
+    left: 100%;
+  }
+  &.noise {
+    background-color: $noise;
+    left: 0;
+  }
 }
 
+
+nav{
+  position:absolute;
+  bottom: 10px;
+  -webkit-transform: translateX( -50% );
+  left: 50%;
+  ul {
+    margin:0;
+    padding:0;
+    li {
+      display: inline-block;
+      border-radius: 50px;
+      width: 10px;
+      height: 10px;
+      margin: 0 3px;
+      background-color: $white;
+      opacity: .3;
+    }
+  }
+
+
+}
 .play-button {
   position: relative;
   left: 50%;
