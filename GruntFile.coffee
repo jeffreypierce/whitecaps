@@ -9,7 +9,13 @@ module.exports = (grunt) ->
           join: true
         files:
           'dist/app.js': [
-            'app/scripts/*'
+            'app/scripts/reverb.coffee'
+            'app/scripts/whitecap.coffee'
+            'app/scripts/spectrum.coffee'
+            'app/scripts/audio.coffee'
+            'app/scripts/app.coffee'
+            'app/scripts/controllers.coffee'
+            'app/scripts/directives.coffee'
 
           ]
 

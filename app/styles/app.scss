@@ -1,12 +1,17 @@
 // Colors
 $white: #FFFFFF;
+
+$home: #9FAFB5;
+$home-faded: #EBEFF0;
+
+
 $noise: #F4B5BD;
 $noise-faded: #FCF0F1;
 
 $hum: #E9C141;
 $hum-faded: #FAF2D9;
 
-$animation-speed: 0.3s ease-in-out;
+$animation-speed: 0.4s ease-out;
 
 @import "fonts";
 @import "dial";
@@ -19,16 +24,49 @@ body {
   -webkit-box-sizing: border-box;
 
 }
+
 .container {
+  overflow: hidden;
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+
+  &.noise {
+    section.noise {
+      left: 0;
+      .control-bar {
+        left: 50%;
+      }
+    }
+    section.hum {
+      left: 100%;
+      .control-bar{
+        left: 0;
+      }
+    }
+    section.home {
+      left: -100%;
+    }
+  }
 
   &.hum {
     section.hum {
       left: 0;
+      .control-bar{
+        left: 50%;
+      }
     }
     section.noise {
       left: -100%;
+
+      .control-bar{
+        left: 0;
+      }
+    }
+    section.home {
+      left: -200%;
     }
   }
+
 }
 
 section {
@@ -38,25 +76,58 @@ section {
   bottom: 0;
   width: 100%;
   -webkit-transition: left $animation-speed;
-  &.hum {
-    background-color: $hum;
-    left: 100%;
+  &.home {
+    background-color: $home;
+    left: 0;
   }
   &.noise {
     background-color: $noise;
-    left: 0;
+    left: 100%;
+    .control-bar{
+      left: 0;
+    }
+  }
+  &.hum {
+    background-color: $hum;
+    left: 200%;
   }
 }
 
+section.home {
+  color: $white;
+  .titles {
+    width: 100%;
+    text-align: center;
+  }
+  h1 {
+    font-size: 4em;
+    text-shadow: 0 -3px 0 rgba(255,255,255,0.4);
+    margin: 0;
+  }
+  h3 {
+    font-size: 2.5em;
+    font-family: 'novecento_sans_widelight';
+    color: $home-faded;
+    margin: 0;
+  }
+  canvas {
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%;
+    width: 100%;
+    display: block;
+  }
+}
 
-nav{
+nav {
   position:absolute;
   bottom: 10px;
   -webkit-transform: translateX( -50% );
   left: 50%;
+  background-color: rgba(159,175,181,0.3);
   ul {
     margin:0;
-    padding:0;
+    padding:0 10px;
     li {
       display: inline-block;
       border-radius: 50px;
@@ -65,11 +136,23 @@ nav{
       margin: 0 3px;
       background-color: $white;
       opacity: .3;
+      -webkit-transition: opacity $animation-speed;
     }
   }
-
-
 }
+
+.hum li.hum {
+  opacity: 1;
+}
+
+.noise li.noise {
+  opacity: 1;
+}
+
+.home li.home {
+  opacity: 1;
+}
+
 .play-button {
   position: relative;
   left: 50%;

@@ -2,18 +2,29 @@ controllers = angular.module('whitecaps.controllers', [])
 
 
 controllers.controller 'container', ($scope) ->
-  sections = ['noise', 'hum']
+  containerNode = angular.element('.container')
+  sections = ['home', 'noise', 'hum']
   position = 0
   $scope.currentSection = sections[position]
 
-  updateSection = () ->
-    position += 1
+  updateSection = (pos) ->
+    position = pos
     $scope.currentSection = sections[position % sections.length]
     $scope.$apply()
 
   angular.element('.title-bar__next').on 'click', () ->
-    updateSection()
+    updateSection(position += 1)
 
+  angular.element('.title-bar__prev').on 'click', () ->
+    updateSection(position -= 1)
+
+  angular.element('nav li').on 'click', (e) ->
+    pos = sections.indexOf this.className
+    updateSection pos
+
+
+
+controllers.controller 'home', ($scope) ->
 
 controllers.controller 'noise', ($scope)->
   $scope.active = ''

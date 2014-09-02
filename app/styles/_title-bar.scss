@@ -103,11 +103,36 @@ $smallBarSize: 80px;
   height: 32px;
 }
 
+.home {
+  .title-bar__bg{
+     figure {
+      color: $home;
+      background-color: $home-faded;
+      -webkit-transition: background-color 0.2s 0.2s, color 0.2s 0.2s;
+    }
+    &.title-bar--show-top figure {
+      background-color: $white;
+    }
+  }
+  .title-bar__prev, .title-bar__next {
+    background-color: $home-faded;
+    &:hover {
+      -webkit-transition: background-color $animation-speed;
+      background-color: $white;
+    }
+  }
+  .title-bar__chevron {
+    fill: $home;
+  }
+}
+
+
 .noise {
   .title-bar__bg{
      figure {
       color: $noise;
       background-color: $noise-faded;
+      -webkit-transition: background-color 0.2s 0.2s, color 0.2s 0.2s;
     }
     &.title-bar--show-top figure {
       background-color: $white;
@@ -130,6 +155,7 @@ $smallBarSize: 80px;
      figure {
       color: $hum;
       background-color: $hum-faded;
+      -webkit-transition: background-color 0.2s 0.2s, color 0.2s 0.2s;
     }
     &.title-bar--show-top figure {
       background-color: $white;
