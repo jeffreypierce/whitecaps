@@ -1,5 +1,10 @@
+reverbBuffer = null
 class Whitecap
-  constructor: (context, @length = 10, @delay = 0, @vol = 0.5) ->
+  constructor: (context, settings) ->
+
+    @length = settings.length || 10
+    @delay = settings.delay || 0
+    @vol = settings.vol || randomRange(5, 8) / 10
     @filter = context.createBiquadFilter()
     @adsr = context.createGain()
     @panner = context.createPanner()
@@ -7,21 +12,28 @@ class Whitecap
     wet = context.createGain()
     dry = context.createGain()
     reverb = context.createConvolver()
-    reverb.buffer = generateImpulse()
+    reverbBuffer = generateImpulse()
+    @type = @soundSource.constructor.name
 
-    if @soundSource.constructor.name == 'OscillatorNode'
-      @output.gain.value = (@vol * 0.5) / notes.length + 1
+    reverb.buffer = reverbBuffer
 
-    if @soundSource.constructor.name == 'AudioBufferSourceNode'
-      @output.gain.value = @vol / noises.length + 1
+    if @type  == 'OscillatorNode'
+      @output.gain.value = (@vol * 0.3)
+      notes.push @soundSource
+
+    if @type == 'AudioBufferSourceNode'
+      @output.gain.value = @vol
+      noises.push @soundSource
+
+    console.log "new #{@type}, #{@delay}, #{@length}"
 
     @panner.setPosition(0, 0, 1)
     @panner.panningModel = 'equalpower'
 
     @soundSource.connect reverb
-    reverb.connect wet
-
     @soundSource.connect dry
+
+    reverb.connect wet
 
     wet.gain.value = 0.8
     dry.gain.value = 0.5
@@ -31,10 +43,7 @@ class Whitecap
 
     @filter.connect @adsr
     @adsr.connect @panner
-
     @panner.connect @output
-
-    @output.connect context.destination
 
     @begin = context.currentTime + @delay
     @end = @begin + @length
@@ -46,7 +55,9 @@ class Whitecap
     @automateVolume()
     @automatePanning()
 
-    @soundSource.onended = noteEnded
+    @soundSource.onended = _.debounce(@noteEnded, 1000)
+
+    @onendCallback = ->
 
   automateFilter: () ->
     attack =
@@ -56,14 +67,14 @@ class Whitecap
       QTime:(@end - @begin) * randomRange(10, 50)/100 + @begin
     decay =
       cutoffTime: attack.QTime + 3
-      cutoff: randomRange(500, 5000)
+      cutoff: randomRange(0, 4000)
       Q: randomRange(1, 6)
       QTime: attack.QTime + 2
 
-    @filter.frequency.setValueAtTime(400, @begin)
+    @filter.frequency.setValueAtTime(randomRange(0, 2000), @begin)
     @filter.frequency.linearRampToValueAtTime(attack.cutoffTime, attack.cutoff)
     @filter.frequency.linearRampToValueAtTime(decay.cutoffTime, decay.cutoff)
-    @filter.frequency.linearRampToValueAtTime(200, @end)
+    @filter.frequency.linearRampToValueAtTime(randomRange(0, 1000), @end)
 
     @filter.Q.setValueAtTime(5, @begin)
     @filter.Q.linearRampToValueAtTime(attack.Q, attack.Qtime)
@@ -106,23 +117,26 @@ class Whitecap
 
     interval = setInterval incrementPan, @length * 1000 / distance
 
+  noteEnded: (e) =>
+    notes.shift() if @type == "OscillatorNode"
+    noises.shift() if @type == "AudioBufferSourceNode"
+
+    @onendCallback()
+
 class Noise extends Whitecap
-  constructor: (context, @length, @delay, @vol = 0.9, color = 'pink')->
+  constructor: (context, settings)->
     @soundSource = context.createBufferSource()
     colors = ['white', 'brown', 'pink']
-    @soundSource.buffer = generateNoiseBuffer @length, colors[randomRange(0, 2)]
+    @soundSource.buffer = generateNoiseBuffer settings.length, colors[randomRange(0, 2)]
     super
-
-    noises.push @soundSource
 
 class Hum extends Whitecap
-  constructor: (context, @length, @delay, @vol = 0.1)->
+  constructor: (context, settings)->
     @soundSource = context.createOscillator()
     @soundSource.type = 'triangle'
+
     super
     @automateFrequeny()
-
-    notes.push @soundSource
 
   automateFrequeny: () ->
     freqs = [82.4, 110, 123.46, 130.81]
@@ -135,20 +149,19 @@ class Hum extends Whitecap
 randomRange = (min, max) ->
   ~~(Math.random() * (max - min + 1)) + min
 
-generateImpulse = (length = 3, decay = 20) ->
+generateImpulse = (length = 2, decay = 100) ->
   rate = context.sampleRate
   length = rate * length
-  impulse = context.createBuffer(2, length, rate)
-  impulseL = impulse.getChannelData(0)
-  impulseR = impulse.getChannelData(0)
+  impulse = context.createBuffer 1, length, rate
+  impulseChannel = impulse.getChannelData 0
   i = 0
   while i < length
-    impulseL[i] = (2 * Math.random() - 1) * Math.pow(1 - i / length, decay)
-    impulseR[i] = (2 * Math.random() - 1) * Math.pow(1 - i / length, decay)
+    impulseChannel[i] = (2 * Math.random() - 1) * Math.pow(1 - i / length, decay)
     i++
   impulse
 
 generateNoiseBuffer = (length, color) ->
+  console.log color
   _length = context.sampleRate * length
   arrayBuffer = new Float32Array _length
   white = () -> 2 * Math.random() - 1
@@ -182,15 +195,10 @@ generateNoiseBuffer = (length, color) ->
         arrayBuffer[i] *= 3.5
         i++
 
-  audioBuffer = context.createBuffer(1, _length, context.sampleRate)
-  audioBuffer.getChannelData(0).set(arrayBuffer)
-  return audioBuffer
+  audioBuffer = context.createBuffer 1, _length, context.sampleRate
+  audioBuffer.getChannelData(0).set arrayBuffer
 
-noteEnded = (e)->
-  type = e.target.constructor.name
-  notes.shift() if type == "OscillatorNode"
-  noises.shift() if type == "AudioBufferSourceNode"
-  console.log "notes: #{notes.length}, noises: #{noises.length}"
+  return audioBuffer
 
 notes = []
 noises = []

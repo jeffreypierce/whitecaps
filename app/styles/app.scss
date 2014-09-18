@@ -22,7 +22,6 @@ body {
   font-family: 'novecento_sans_widedemibold';
   margin: 0;
   -webkit-box-sizing: border-box;
-
 }
 
 .container {
@@ -70,11 +69,13 @@ body {
 }
 
 section {
+  z-index:200;
   overflow: hidden;
   position: absolute;
   top: 0;
   bottom: 0;
   width: 100%;
+  opacity: 0.9;
   -webkit-transition: left $animation-speed;
   &.home {
     background-color: $home;
@@ -110,24 +111,24 @@ section.home {
     color: $home-faded;
     margin: 0;
   }
-  canvas {
-    position: absolute;
-    left: 0; top: 0;
-    height: 100%;
-    width: 100%;
-    display: block;
-  }
-}
 
+}
+canvas {
+  z-index: 10;
+  position: absolute;
+  left: 0; top: 0;
+  height: 100%;
+  width: 100%;
+  display: block;
+}
 nav {
   position:absolute;
   bottom: 10px;
   -webkit-transform: translateX( -50% );
   left: 50%;
-  background-color: rgba(159,175,181,0.3);
   ul {
     margin:0;
-    padding:0 10px;
+    padding:0 3px;
     li {
       display: inline-block;
       border-radius: 50px;
@@ -141,16 +142,26 @@ nav {
   }
 }
 
-.hum li.hum {
-  opacity: 1;
+.hum {
+  nav {
+    background-color: rgba(159,175,181,0.3)
+  }
+  li.hum {
+    opacity: 1;
+  }
 }
 
 .noise li.noise {
   opacity: 1;
 }
 
-.home li.home {
-  opacity: 1;
+.home{
+  nav {
+    background-color: rgba(159,175,181,0.3)
+  }
+  li.home {
+    opacity: 1;
+  }
 }
 
 .play-button {

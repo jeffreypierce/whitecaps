@@ -1,9 +1,3 @@
-requestAnimationFrame = window.requestAnimationFrame ||
-  window.mozRequestAnimationFrame ||
-  window.webkitRequestAnimationFrame
-
-cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
-
 canvas = document.querySelector("canvas")
 canvasContext = canvas.getContext("2d")
 
@@ -12,13 +6,12 @@ class Spectrum
     @analyser = context.createAnalyser()
     @barWidth = 24
     @barSpacing = -12
-    @animation = requestAnimationFrame @analyse.bind(this)
 
   analyse: () ->
     width = canvas.width
     height = canvas.height
     frequencyData = new Uint8Array(@analyser.frequencyBinCount)
-    frequencyData = frequencyData.subarray(100, 200)
+    frequencyData = frequencyData.subarray(100, 400)
     @analyser.getByteFrequencyData(frequencyData)
     canvasContext.clearRect 0, 0, width, height
     barCount = Math.round(width / (@barWidth + @barSpacing))
@@ -31,7 +24,3 @@ class Spectrum
       canvasContext.fillRect ((@barWidth + @barSpacing) * i) +
         (@barSpacing / 2), height, @barWidth - @barSpacing, -barHeight
       i++
-    requestAnimationFrame @analyse.bind(this)
-
-  cancel: () ->
-    cancelAnimationFrame(@animation)

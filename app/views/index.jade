@@ -19,12 +19,14 @@ html
         path(d='M1.5 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z', transform='translate(1)' )
 
   body(ng-app="whitecaps")
+
     .container(ng-controller="container" ng-class="currentSection")
+      canvas(width="1024", height="768")
       section(ng-controller="home" class="home")
         .titles
           h1 WHITECAPS
-          h3 ALEATORIC NOISE
-        canvas(width="1024", height="768")
+          //- h3 ALEATORIC NOISE
+
         .title-bar.play
           .title-bar__bg
             figure.title-bar--front
