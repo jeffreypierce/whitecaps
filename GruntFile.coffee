@@ -11,11 +11,9 @@ module.exports = (grunt) ->
           'dist/app.js': [
             'app/scripts/whitecap.coffee'
             'app/scripts/spectrum.coffee'
-            'app/scripts/audio.coffee'
             'app/scripts/app.coffee'
             'app/scripts/controllers.coffee'
             'app/scripts/directives.coffee'
-
           ]
 
     # copy:
@@ -79,7 +77,6 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-sass'
-
 
   grunt.registerTask 'default', ['coffee', 'jade', 'sass', 'uglify']
   grunt.registerTask 'vendor', ['uglify']

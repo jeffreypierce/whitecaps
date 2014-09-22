@@ -1,6 +1,5 @@
 controllers = angular.module('whitecaps.controllers', [])
 
-
 controllers.controller 'container', ($scope) ->
   containerNode = angular.element('.container')
   sections = ['home', 'noise', 'hum']
@@ -21,13 +20,45 @@ controllers.controller 'container', ($scope) ->
   angular.element('nav li').on 'click', (e) ->
     pos = sections.indexOf this.className
     updateSection pos
-
+  $scope.active = ''
+  $scope.setActive = (name) ->
+    $scope.active = name
 
 
 controllers.controller 'home', ($scope) ->
+  context.listener.setPosition(0, 0, 0)
+  mainMix = context.createGain()
+  mainMix.connect context.destination
+
+  spectrum = new Spectrum(context)
+  mainMix.connect spectrum.analyser
+
+  playHum = () ->
+    settings = {length: randomRange(5, 20), delay: randomRange(0, 3)}
+    hum = new Hum(settings)
+    hum.onendCallback = playHum
+    hum.output.connect mainMix
+
+  playNoise = () ->
+    settings = {length: randomRange(5, 20), delay: randomRange(0, 3)}
+    noise = new Noise(settings)
+    noise.onendCallback = playNoise
+    noise.output.connect mainMix
+
+  animationLoop = () ->
+    spectrum.analyse()
+    requestAnimationFrame animationLoop
+
+  startSound = ->
+    requestAnimationFrame animationLoop
+    playNoise()
+    playNoise()
+    playNoise()
+    angular.element('.play').off 'mouseup', startSound
+
+  angular.element('.play').on 'mouseup', startSound
 
 controllers.controller 'noise', ($scope)->
-  $scope.active = ''
   $scope.bars = [
     {
       name: 'amount'
@@ -55,11 +86,9 @@ controllers.controller 'noise', ($scope)->
     }
   ]
 
-  $scope.setActive = (name) ->
-    $scope.active = name
 
 controllers.controller 'hum', ($scope)->
-  $scope.active = ''
+
   $scope.bars = [
     {
       name: 'amount'
@@ -86,6 +115,3 @@ controllers.controller 'hum', ($scope)->
       scale: [1000, 4000]
     }
   ]
-
-  $scope.setActive = (name) ->
-    $scope.active = name

@@ -2,6 +2,7 @@ $barSize: 120px;
 $smallBarSize: 80px;
 
 .title-bar {
+  z-index:200;
   width: 100%;
   height: $barSize;
   @media screen and (max-width: 768px) {

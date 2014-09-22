@@ -70,24 +70,24 @@ directives.directive 'slider', ($document) ->
     titleBarHover = false
     sliderHover = false
 
-    titleBar.on 'mouseenter', () ->
+    titleBar.on 'mousedown touchstart', () ->
       titleBarHover = true
 
-    titleBar.on 'mouseleave', () ->
+    titleBar.on 'mouseup touchend', () ->
       titleBarHover = false
       if sliderHover == false
         scope.$apply(scope.deactive)
         allSliders.removeClass('active')
 
-    element.on 'mouseenter', (e) ->
+    element.on 'mousedown touchstart', (e) ->
       sliderHover = true
       enter = ->
         scope.$apply(scope.active)
         allSliders.removeClass('active')
         element.addClass('active')
-      setTimeout(enter, 1)
+      setTimeout(enter, 1) #dirty hack to force function call order
 
-    element.on 'mouseleave', (e) ->
+    element.on 'mouseup touchend', (e) ->
       sliderHover = false
       leave = ->
         return if titleBarHover

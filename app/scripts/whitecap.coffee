@@ -1,11 +1,13 @@
 reverbBuffer = null
 class Whitecap
-  constructor: (context, settings) ->
+  constructor: (settings) ->
 
     @length = settings.length || 10
     @delay = settings.delay || 0
     @vol = settings.vol || randomRange(5, 8) / 10
     @filter = context.createBiquadFilter()
+
+
     @adsr = context.createGain()
     @panner = context.createPanner()
     @output = context.createGain()
@@ -18,14 +20,12 @@ class Whitecap
     reverb.buffer = reverbBuffer
 
     if @type  == 'OscillatorNode'
-      @output.gain.value = (@vol * 0.3)
+      @output.gain.value = (@vol * 0.4)
       notes.push @soundSource
 
     if @type == 'AudioBufferSourceNode'
       @output.gain.value = @vol
       noises.push @soundSource
-
-    console.log "new #{@type}, #{@delay}, #{@length}"
 
     @panner.setPosition(0, 0, 1)
     @panner.panningModel = 'equalpower'
@@ -124,14 +124,14 @@ class Whitecap
     @onendCallback()
 
 class Noise extends Whitecap
-  constructor: (context, settings)->
+  constructor: (settings)->
     @soundSource = context.createBufferSource()
     colors = ['white', 'brown', 'pink']
     @soundSource.buffer = generateNoiseBuffer settings.length, colors[randomRange(0, 2)]
     super
 
 class Hum extends Whitecap
-  constructor: (context, settings)->
+  constructor: (settings)->
     @soundSource = context.createOscillator()
     @soundSource.type = 'triangle'
 
@@ -154,6 +154,7 @@ generateImpulse = (length = 2, decay = 100) ->
   length = rate * length
   impulse = context.createBuffer 1, length, rate
   impulseChannel = impulse.getChannelData 0
+  # impulseR = impulse.getChannelData 1
   i = 0
   while i < length
     impulseChannel[i] = (2 * Math.random() - 1) * Math.pow(1 - i / length, decay)
@@ -161,7 +162,6 @@ generateImpulse = (length = 2, decay = 100) ->
   impulse
 
 generateNoiseBuffer = (length, color) ->
-  console.log color
   _length = context.sampleRate * length
   arrayBuffer = new Float32Array _length
   white = () -> 2 * Math.random() - 1

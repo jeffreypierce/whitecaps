@@ -11,6 +11,7 @@
 }
 
 .slider {
+  cursor: ns-resize;
   position: relative;
   width: 120px;
   float: left;
@@ -29,6 +30,7 @@
 }
 
 .slider__handle-min, .slider__handle-max {
+
   -webkit-transition: background-color $animation-speed;
   position: absolute;
   width: 100%;
