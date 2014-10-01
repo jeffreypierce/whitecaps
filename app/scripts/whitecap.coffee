@@ -21,11 +21,11 @@ class Whitecap
 
     if @type  == 'OscillatorNode'
       @output.gain.value = (@vol * 0.4)
-      notes.push @soundSource
+      notes.push @
 
     if @type == 'AudioBufferSourceNode'
       @output.gain.value = @vol
-      noises.push @soundSource
+      noises.push @
 
     @panner.setPosition(0, 0, 1)
     @panner.panningModel = 'equalpower'

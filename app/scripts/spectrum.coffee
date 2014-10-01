@@ -19,7 +19,7 @@ class Spectrum
     i = 0
     while i < barCount
       barHeight = frequencyData[i * loopStep] * (height / 255)
-      alpha = 0.8 - (barHeight / width)
+      alpha = (barHeight / width)
       canvasContext.fillStyle = "rgba(235,239,240,#{alpha})"
       canvasContext.fillRect ((@barWidth + @barSpacing) * i) +
         (@barSpacing / 2), height, @barWidth - @barSpacing, -barHeight

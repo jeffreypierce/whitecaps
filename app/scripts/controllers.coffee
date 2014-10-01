@@ -29,9 +29,11 @@ controllers.controller 'home', ($scope) ->
   context.listener.setPosition(0, 0, 0)
   mainMix = context.createGain()
   mainMix.connect context.destination
-
+  $scope.switch = "off"
   spectrum = new Spectrum(context)
   mainMix.connect spectrum.analyser
+
+  $scope.isPlaying = false
 
   playHum = () ->
     settings = {length: randomRange(5, 20), delay: randomRange(0, 3)}
@@ -54,9 +56,19 @@ controllers.controller 'home', ($scope) ->
     playNoise()
     playNoise()
     playNoise()
-    angular.element('.play').off 'mouseup', startSound
 
-  angular.element('.play').on 'mouseup', startSound
+
+  stopSound = ->
+    _.each noises, (noise) ->
+      noise.onendCallback = () ->
+      noise.soundSource.stop()
+
+
+  $scope.soundControl = () ->
+    if $scope.isPlaying
+      startSound()
+    else
+      stopSound()
 
 controllers.controller 'noise', ($scope)->
   $scope.bars = [
@@ -67,13 +79,13 @@ controllers.controller 'noise', ($scope)->
       scale: [0, 100]
     }
     {
-      name: 'shape'
+      name: 'length'
       minValue: 40
       maxValue: 61
       scale: [0, 100]
     }
     {
-      name: 'growth'
+      name: 'shape'
       minValue: 0
       maxValue: 100
       scale: [0, 100]
@@ -86,9 +98,7 @@ controllers.controller 'noise', ($scope)->
     }
   ]
 
-
 controllers.controller 'hum', ($scope)->
-
   $scope.bars = [
     {
       name: 'amount'
@@ -97,13 +107,13 @@ controllers.controller 'hum', ($scope)->
       scale: [0, 100]
     }
     {
-      name: 'shape'
+      name: 'length'
       minValue: 40
       maxValue: 61
       scale: [0, 100]
     }
     {
-      name: 'growth'
+      name: 'shape'
       minValue: 0
       maxValue: 100
       scale: [0, 100]
