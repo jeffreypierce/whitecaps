@@ -10,7 +10,7 @@ $noise-faded: #FCF0F1;
 $hum: #E9C141;
 $hum-faded: #FAF2D9;
 
-$animation-speed: 0.2s ease-out;
+$animation-speed: 0.4s ease-out;
 
 @import "fonts";
 @import "dial";
@@ -75,7 +75,7 @@ section {
   top: 0;
   bottom: 0;
   width: 100%;
-  -webkit-transition: left $animation-speed;
+  -webkit-transition: left 0.3s ease-out;
   &.home {
     background-color: $home;
     left: 0;

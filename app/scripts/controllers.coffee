@@ -1,4 +1,4 @@
-controllers = angular.module('whitecaps.controllers', [])
+controllers = angular.module 'whitecaps.controllers', ['whitecaps.services']
 
 controllers.controller 'container', ($scope) ->
   containerNode = angular.element('.container')
@@ -20,30 +20,22 @@ controllers.controller 'container', ($scope) ->
   angular.element('nav li').on 'click', (e) ->
     pos = sections.indexOf this.className
     updateSection pos
+
   $scope.active = ''
   $scope.setActive = (name) ->
     $scope.active = name
 
 
-controllers.controller 'home', ($scope) ->
-  context.listener.setPosition(0, 0, 0)
-  mainMix = context.createGain()
-  mainMix.connect context.destination
-  $scope.switch = "off"
-  spectrum = new Spectrum(context)
-  mainMix.connect spectrum.analyser
-
+controllers.controller 'home', ($scope, settingsService) ->
   $scope.isPlaying = false
 
   playHum = () ->
-    settings = {length: randomRange(5, 20), delay: randomRange(0, 3)}
-    hum = new Hum(settings)
+    hum = new Hum settingsService.humSettings
     hum.onendCallback = playHum
     hum.output.connect mainMix
 
   playNoise = () ->
-    settings = {length: randomRange(5, 20), delay: randomRange(0, 3)}
-    noise = new Noise(settings)
+    noise = new Noise settingsService.noiseSettings
     noise.onendCallback = playNoise
     noise.output.connect mainMix
 
@@ -56,7 +48,8 @@ controllers.controller 'home', ($scope) ->
     playNoise()
     playNoise()
     playNoise()
-
+    # playHum()
+    # playHum()
 
   stopSound = ->
     _.each noises, (noise) ->
@@ -70,58 +63,8 @@ controllers.controller 'home', ($scope) ->
     else
       stopSound()
 
-controllers.controller 'noise', ($scope)->
-  $scope.bars = [
-    {
-      name: 'amount'
-      minValue: 10
-      maxValue: 70
-      scale: [0, 100]
-    }
-    {
-      name: 'length'
-      minValue: 40
-      maxValue: 61
-      scale: [0, 100]
-    }
-    {
-      name: 'shape'
-      minValue: 0
-      maxValue: 100
-      scale: [0, 100]
-    }
-    {
-      name: 'motion'
-      minValue: 2000
-      maxValue: 3000
-      scale: [1000, 4000]
-    }
-  ]
+controllers.controller 'noise', ($scope, settingsService) ->
+  $scope.noises = settingsService.noiseSettings
 
-controllers.controller 'hum', ($scope)->
-  $scope.bars = [
-    {
-      name: 'amount'
-      minValue: 10
-      maxValue: 70
-      scale: [0, 100]
-    }
-    {
-      name: 'length'
-      minValue: 40
-      maxValue: 61
-      scale: [0, 100]
-    }
-    {
-      name: 'shape'
-      minValue: 0
-      maxValue: 100
-      scale: [0, 100]
-    }
-    {
-      name: 'motion'
-      minValue: 2000
-      maxValue: 3000
-      scale: [1000, 4000]
-    }
-  ]
+controllers.controller 'hum', ($scope, settingsService)->
+  $scope.hums = settingsService.humSettings

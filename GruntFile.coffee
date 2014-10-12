@@ -9,11 +9,13 @@ module.exports = (grunt) ->
           join: true
         files:
           'dist/app.js': [
-            'app/scripts/whitecap.coffee'
             'app/scripts/spectrum.coffee'
+            'app/scripts/audio.coffee'
+            'app/scripts/whitecap.coffee'
             'app/scripts/app.coffee'
             'app/scripts/controllers.coffee'
             'app/scripts/directives.coffee'
+            'app/scripts/services.coffee'
           ]
 
     # copy:
@@ -80,4 +82,4 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'default', ['coffee', 'jade', 'sass', 'uglify']
   grunt.registerTask 'vendor', ['uglify']
-  grunt.registerTask 'server', ['connect', 'watch']
+  grunt.registerTask 'server', ['coffee', 'jade', 'sass', 'connect', 'watch']

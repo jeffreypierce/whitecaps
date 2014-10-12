@@ -28,11 +28,9 @@ html
           input#play.switch(type="checkbox", ng-model="isPlaying", ng-change="soundControl()")
           label.switch__label(for="play")
 
-
-
       section(ng-controller="noise" class="noise")
         .control-bar
-          slider(ng-repeat="bar in bars", model="bar", active="setActive(bar.name)", deactive="setActive('')")
+          slider(ng-repeat="(name, noise) in noises", model="noise", active="setActive(name)", deactive="setActive('')")
 
         .title-bar
           .title-bar__bg(ng-class="{'title-bar--show-top': active != ''}")
@@ -48,7 +46,7 @@ html
 
       section(ng-controller="hum" class="hum")
         .control-bar
-          slider(ng-repeat="bar in bars", model="bar", active="setActive(bar.name)", deactive="setActive('')")
+          slider(ng-repeat="(name, hum) in hums", model="hum", active="setActive(name)", deactive="setActive('')")
 
         .title-bar
           .title-bar__bg(ng-class="{'title-bar--show-top': active != ''}")

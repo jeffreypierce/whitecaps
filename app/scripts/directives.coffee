@@ -61,12 +61,12 @@ directives.directive 'slider', ($document) ->
     scaledHeight = 0
     titleBarHeight = 0
     handles = [
-      element.find('.slider__handle-max')
-      element.find('.slider__handle-min')
+      element.find '.slider__handle-max'
+      element.find '.slider__handle-min'
     ]
-    titleBar = angular.element('.title-bar')
+    titleBar = angular.element '.title-bar'
     scale = scope.model.scale[1] - scope.model.scale[0]
-    allSliders = angular.element('.slider')
+    allSliders = angular.element '.slider'
     titleBarHover = false
     sliderHover = false
 
@@ -76,39 +76,39 @@ directives.directive 'slider', ($document) ->
     titleBar.on 'mouseup touchend', () ->
       titleBarHover = false
       if sliderHover == false
-        scope.$apply(scope.deactive)
-        allSliders.removeClass('active')
+        scope.$apply scope.deactive
+        allSliders.removeClass 'active'
 
     element.on 'mousedown touchstart', (e) ->
       sliderHover = true
       enter = ->
-        scope.$apply(scope.active)
-        allSliders.removeClass('active')
-        element.addClass('active')
-      setTimeout(enter, 1) #dirty hack to force function call order
+        scope.$apply scope.active
+        allSliders.removeClass 'active'
+        element.addClass 'active'
+
+      setTimeout enter, 1 # dirty hack to force function call order
 
     element.on 'mouseup touchend', (e) ->
       sliderHover = false
       leave = ->
         return if titleBarHover
-        scope.$apply(scope.deactive)
-        allSliders.removeClass('active')
+        scope.$apply scope.deactive
+        allSliders.removeClass 'active'
 
-      setTimeout(leave, 1)
+      setTimeout leave, 1 # dirty hack to force function call order
 
 
     setInitialValues = () ->
       maxHeight = $document.height() - 100
       titleBarHeight = titleBar.height()
-      scaledHeight = (maxHeight - titleBarHeight - 48)
+      scaledHeight = maxHeight - titleBarHeight - 48
       element.css 'height', maxHeight + "px"
 
       return if scope.model.minValue > scope.model.maxValue
-      minY = scaledHeight * scope.model.minValue/scope.model.scale[1]
-      maxY = scaledHeight - (scaledHeight * scope.model.maxValue/scope.model.scale[1])
-      handles[0].css('top', maxY + 'px')
-      handles[1].css('bottom', minY + 'px')
-
+      minY = scaledHeight * scope.model.minValue / scope.model.scale[1]
+      maxY = scaledHeight - (scaledHeight * scope.model.maxValue / scope.model.scale[1])
+      handles[0].css 'top', maxY + 'px'
+      handles[1].css 'bottom', minY + 'px'
 
     getY = (e) ->
       (e.pageY ? e.originalEvent.touches[0].pageY) - 50
@@ -120,9 +120,9 @@ directives.directive 'slider', ($document) ->
         position = 'bottom'
       return if 0 > y || y > scaledHeight/2
 
-      handles[index].css(position, y + 'px')
+      handles[index].css position, y + 'px'
 
-      percent = y/scaledHeight
+      percent = y / scaledHeight
 
       if index == 0
         scope.model.maxValue = (1 - percent) * scale + scope.model.scale[0]
@@ -130,29 +130,26 @@ directives.directive 'slider', ($document) ->
         scope.model.minValue = percent * scale + scope.model.scale[0]
 
       scope.$apply ()-> scope.model
-      console.log scope.model.minValue, scope.model.maxValue
 
     unbindHandles = ->
       $document.bind 'mouseup touchend', (e) ->
         $document.unbind 'mousemove touchmove'
         $document.unbind 'mouseup touchend'
 
-
     bindHandles = (index) ->
       handles[index].on 'mousedown touchstart', (e) ->
         e.preventDefault()
-        updateValues(getY(e), index)
+        updateValues getY(e), index
         unbindHandles()
         $document.on 'mousemove touchmove', (e) ->
-
-          updateValues(getY(e), index)
+          updateValues getY(e), index
           unbindHandles()
 
-    bindHandles(0)
-    bindHandles(1)
+    bindHandles 0
+    bindHandles 1
     setInitialValues()
 
-    lazyResize = _.debounce(setInitialValues, 100)
+    lazyResize = _.debounce setInitialValues, 100
 
     $(window).on 'resize', (e) ->
       lazyResize()

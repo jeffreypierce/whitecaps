@@ -1,13 +1,10 @@
-reverbBuffer = null
 class Whitecap
   constructor: (settings) ->
-
-    @length = settings.length || 10
-    @delay = settings.delay || 0
-    @vol = settings.vol || randomRange(5, 8) / 10
+    @settings = settings
+    @length = randomRange settings.length.minValue, settings.length.maxValue
+    @delay = randomRange settings.length.minValue, settings.length.maxValue / 3
+    @vol = 0.8
     @filter = context.createBiquadFilter()
-
-
     @adsr = context.createGain()
     @panner = context.createPanner()
     @output = context.createGain()
@@ -20,14 +17,14 @@ class Whitecap
     reverb.buffer = reverbBuffer
 
     if @type  == 'OscillatorNode'
-      @output.gain.value = (@vol * 0.4)
+      @output.gain.value = 0.3
       notes.push @
 
     if @type == 'AudioBufferSourceNode'
       @output.gain.value = @vol
       noises.push @
 
-    @panner.setPosition(0, 0, 1)
+    @panner.setPosition 0, 0, 1
     @panner.panningModel = 'equalpower'
 
     @soundSource.connect reverb
@@ -48,56 +45,55 @@ class Whitecap
     @begin = context.currentTime + @delay
     @end = @begin + @length
 
-    @soundSource.start(@begin)
-    @soundSource.stop(@end)
+    @soundSource.start @begin
+    @soundSource.stop @end
 
     @automateFilter()
     @automateVolume()
     @automatePanning()
 
-    @soundSource.onended = _.debounce(@noteEnded, 1000)
+    @soundSource.onended = @noteEnded
 
     @onendCallback = ->
 
+    console.log @
   automateFilter: () ->
-    attack =
-      cutoffTime: (@end - @begin) * randomRange(10, 50)/100 + @begin
-      cutoff: randomRange(500, 5000)
-      Q: randomRange(1, 6)
-      QTime:(@end - @begin) * randomRange(10, 50)/100 + @begin
-    decay =
-      cutoffTime: attack.QTime + 3
-      cutoff: randomRange(0, 4000)
-      Q: randomRange(1, 6)
-      QTime: attack.QTime + 2
+    attackTime = (@end - @begin) * randomRange(10, 50) / 100 + @begin
+    decayTime = (@end - @begin) * randomRange(50, 80) / 100 + @begin
 
-    @filter.frequency.setValueAtTime(randomRange(0, 2000), @begin)
-    @filter.frequency.linearRampToValueAtTime(attack.cutoffTime, attack.cutoff)
-    @filter.frequency.linearRampToValueAtTime(decay.cutoffTime, decay.cutoff)
-    @filter.frequency.linearRampToValueAtTime(randomRange(0, 1000), @end)
+    attack =
+      cutoff: randomRange(@settings.shape.minValue, @settings.shape.maxValue)
+      Q: randomRange(1, 6)
+    decay =
+      cutoff: randomRange(@settings.shape.minValue, @settings.shape.maxValue)
+      Q: randomRange(1, 6)
+
+    @filter.frequency.setValueAtTime(randomRange(0, @settings.shape.minValue), @begin)
+    @filter.frequency.linearRampToValueAtTime(attack.cutoff, attackTime)
+    @filter.frequency.linearRampToValueAtTime(decay.cutoff, decayTime)
+    @filter.frequency.linearRampToValueAtTime(randomRange(0, @settings.shape.minValue), @end)
 
     @filter.Q.setValueAtTime(5, @begin)
-    @filter.Q.linearRampToValueAtTime(attack.Q, attack.Qtime)
-    @filter.Q.linearRampToValueAtTime(decay.Q, decay.Qtime)
+    @filter.Q.linearRampToValueAtTime(attack.Q, attackTime)
+    @filter.Q.linearRampToValueAtTime(decay.Q, decayTime)
     @filter.Q.linearRampToValueAtTime(1, @end)
 
   automateVolume: () ->
-    attack =
-      time: (@end - @begin) * randomRange(10, 50)/100 + @begin
-      gain: randomRange(50, 90)/100
-    decay =
-      time: attack.time + 2
-      gain: randomRange(30, 90)/100
+    attackTime = (@end - @begin) * randomRange(10, 50) / 100 + @begin
+    decayTime = (@end - @begin) * randomRange(50, 80) / 100 + @begin
+
+    attackGain = randomRange(@settings.amount.minValue, @settings.amount.minValue) / 100
+    decayGain = randomRange(@settings.amount.minValue, @settings.amount.minValue) / 100
 
     @adsr.gain.setValueAtTime(0, @begin)
-    @adsr.gain.linearRampToValueAtTime(attack.gain, attack.time)
-    @adsr.gain.linearRampToValueAtTime(decay.gain, decay.time)
+    @adsr.gain.linearRampToValueAtTime(attackGain, attackTime)
+    @adsr.gain.linearRampToValueAtTime(decayGain, decayTime)
     @adsr.gain.linearRampToValueAtTime(0, @end)
 
   automatePanning: () ->
-    startPan = randomRange(-90, 90)
-    endPan = randomRange(-90, 90)
-    distance = Math.abs(startPan - endPan)
+    startPan = randomRange @settings.motion.minValue, @settings.motion.maxValue
+    endPan = randomRange @settings.motion.minValue, @settings.motion.maxValue
+    distance = Math.abs startPan - endPan
 
     incrementPan = () =>
       if startPan < endPan
@@ -110,8 +106,8 @@ class Whitecap
       xDeg = parseInt num
       zDeg = xDeg + 90
       zDeg = 180 - zDeg if zDeg > 90
-      x = Math.sin(xDeg * (Math.PI / 180))
-      z = Math.sin(zDeg * (Math.PI / 180))
+      x = Math.sin xDeg * (Math.PI / 180)
+      z = Math.sin zDeg * (Math.PI / 180)
 
       @panner.setPosition x, 0, z
 
@@ -127,7 +123,7 @@ class Noise extends Whitecap
   constructor: (settings)->
     @soundSource = context.createBufferSource()
     colors = ['white', 'brown', 'pink']
-    @soundSource.buffer = generateNoiseBuffer settings.length, colors[randomRange(0, 2)]
+    @soundSource.buffer = generateNoiseBuffer randomRange(settings.length.minValue, settings.length.maxValue), colors[randomRange(0, 2)]
     super
 
 class Hum extends Whitecap
@@ -139,8 +135,8 @@ class Hum extends Whitecap
     @automateFrequeny()
 
   automateFrequeny: () ->
-    freqs = [82.4, 110, 123.46, 130.81]
-    freq = freqs[randomRange(0, 3)]
+    freqs = @settings.frequencies
+    freq = freqs[randomRange 0, freqs.length]
     @soundSource.frequency.setValueAtTime freq, @begin
     @soundSource.frequency.linearRampToValueAtTime freq + randomRange(-5, 5), @begin + randomRange(1, @length - 1)
     @soundSource.frequency.linearRampToValueAtTime freq, @end
@@ -149,10 +145,10 @@ class Hum extends Whitecap
 randomRange = (min, max) ->
   ~~(Math.random() * (max - min + 1)) + min
 
-generateImpulse = (length = 2, decay = 100) ->
+generateImpulse = (length = 2, decay = 50) ->
   rate = context.sampleRate
-  length = rate * length
-  impulse = context.createBuffer 1, length, rate
+  _length = rate * length
+  impulse = context.createBuffer 1, _length, rate
   impulseChannel = impulse.getChannelData 0
   # impulseR = impulse.getChannelData 1
   i = 0
