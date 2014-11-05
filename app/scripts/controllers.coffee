@@ -28,9 +28,11 @@ controllers.controller 'container', ($scope) ->
 
 controllers.controller 'home', ($scope, settingsService) ->
   $scope.isPlaying = false
+  numberOfNotes = 2
+  numberOfNoises = 3
 
   playHum = () ->
-    hum = new Hum settingsService.humSettings
+    hum = new Hum settingsService.humSettings, settingsService.frequencies
     hum.onendCallback = playHum
     hum.output.connect mainMix
 
@@ -45,17 +47,23 @@ controllers.controller 'home', ($scope, settingsService) ->
 
   startSound = ->
     requestAnimationFrame animationLoop
-    playNoise()
-    playNoise()
-    playNoise()
-    # playHum()
-    # playHum()
+    i = 0
+    j = 0
+    while i < numberOfNoises
+      playNoise()
+      i++
+    while j < numberOfNotes
+      playHum()
+      j++
 
   stopSound = ->
     _.each noises, (noise) ->
       noise.onendCallback = () ->
       noise.soundSource.stop()
 
+    _.each notes, (noise) ->
+      noise.onendCallback = () ->
+      noise.soundSource.stop()
 
   $scope.soundControl = () ->
     if $scope.isPlaying

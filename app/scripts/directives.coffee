@@ -66,6 +66,7 @@ directives.directive 'slider', ($document) ->
     ]
     titleBar = angular.element '.title-bar'
     scale = scope.model.scale[1] - scope.model.scale[0]
+
     allSliders = angular.element '.slider'
     titleBarHover = false
     sliderHover = false
@@ -105,15 +106,25 @@ directives.directive 'slider', ($document) ->
       element.css 'height', maxHeight + "px"
 
       return if scope.model.minValue > scope.model.maxValue
-      minY = scaledHeight * scope.model.minValue / scope.model.scale[1]
+      minY = Math.abs(scaledHeight * scope.model.minValue / scope.model.scale[1])
       maxY = scaledHeight - (scaledHeight * scope.model.maxValue / scope.model.scale[1])
+
+      # hack for scales that cross the zero boundry
+      # TODO - find less coupled solution
+      if scope.model.scale[0] < 0
+        minY = minY / 2
+        maxY = maxY / 2
+
       handles[0].css 'top', maxY + 'px'
       handles[1].css 'bottom', minY + 'px'
+
+      console.log minY
 
     getY = (e) ->
       (e.pageY ? e.originalEvent.touches[0].pageY) - 50
 
     updateValues = (y, index) ->
+      console.log 'update'
       position = 'top'
       if index == 1
         y = maxHeight - y

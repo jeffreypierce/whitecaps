@@ -16,8 +16,8 @@ services.factory 'settingsService', () ->
         maxValue: 3000
         scale: [0, 5000]
       'motion':
-        minValue: -75
-        maxValue: 80
+        minValue: -45
+        maxValue: 45
         scale: [-90, 90]
 
     humSettings:
@@ -34,10 +34,9 @@ services.factory 'settingsService', () ->
         maxValue: 3000
         scale: [0, 5000]
       'motion':
-        minValue: -75
-        maxValue: 80
+        minValue: -45
+        maxValue: 45
         scale: [-90, 90]
 
-    frequencies: [82.4, 110, 123.46, 130.81]
-
+    'frequencies': [82.4, 110, 123.46, 130.81]
   }

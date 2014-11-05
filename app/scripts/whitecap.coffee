@@ -1,7 +1,6 @@
 class Whitecap
   constructor: (settings) ->
     @settings = settings
-    @length = randomRange settings.length.minValue, settings.length.maxValue
     @delay = randomRange settings.length.minValue, settings.length.maxValue / 3
     @vol = 0.8
     @filter = context.createBiquadFilter()
@@ -52,11 +51,12 @@ class Whitecap
     @automateVolume()
     @automatePanning()
 
-    @soundSource.onended = @noteEnded
+    @soundSource.onended = _.debounce(@noteEnded, 1000)
 
     @onendCallback = ->
 
     console.log @
+
   automateFilter: () ->
     attackTime = (@end - @begin) * randomRange(10, 50) / 100 + @begin
     decayTime = (@end - @begin) * randomRange(50, 80) / 100 + @begin
@@ -68,10 +68,10 @@ class Whitecap
       cutoff: randomRange(@settings.shape.minValue, @settings.shape.maxValue)
       Q: randomRange(1, 6)
 
-    @filter.frequency.setValueAtTime(randomRange(0, @settings.shape.minValue), @begin)
+    @filter.frequency.setValueAtTime(@settings.shape.minValue, @begin)
     @filter.frequency.linearRampToValueAtTime(attack.cutoff, attackTime)
     @filter.frequency.linearRampToValueAtTime(decay.cutoff, decayTime)
-    @filter.frequency.linearRampToValueAtTime(randomRange(0, @settings.shape.minValue), @end)
+    @filter.frequency.linearRampToValueAtTime(@settings.shape.minValue, @end)
 
     @filter.Q.setValueAtTime(5, @begin)
     @filter.Q.linearRampToValueAtTime(attack.Q, attackTime)
@@ -82,8 +82,8 @@ class Whitecap
     attackTime = (@end - @begin) * randomRange(10, 50) / 100 + @begin
     decayTime = (@end - @begin) * randomRange(50, 80) / 100 + @begin
 
-    attackGain = randomRange(@settings.amount.minValue, @settings.amount.minValue) / 100
-    decayGain = randomRange(@settings.amount.minValue, @settings.amount.minValue) / 100
+    attackGain = randomRange(@settings.amount.minValue, @settings.amount.maxValue) / 100
+    decayGain = randomRange(@settings.amount.minValue, @settings.amount.maxValue) / 100
 
     @adsr.gain.setValueAtTime(0, @begin)
     @adsr.gain.linearRampToValueAtTime(attackGain, attackTime)
@@ -116,27 +116,27 @@ class Whitecap
   noteEnded: (e) =>
     notes.shift() if @type == "OscillatorNode"
     noises.shift() if @type == "AudioBufferSourceNode"
-
     @onendCallback()
 
 class Noise extends Whitecap
-  constructor: (settings)->
+  constructor: (settings) ->
     @soundSource = context.createBufferSource()
+    @length = randomRange settings.length.minValue, settings.length.maxValue
     colors = ['white', 'brown', 'pink']
-    @soundSource.buffer = generateNoiseBuffer randomRange(settings.length.minValue, settings.length.maxValue), colors[randomRange(0, 2)]
+    @soundSource.buffer = generateNoiseBuffer @length, colors[randomRange(0, 2)]
     super
 
 class Hum extends Whitecap
-  constructor: (settings)->
+  constructor: (settings, freqs) ->
+    @length = randomRange settings.length.minValue, settings.length.maxValue
     @soundSource = context.createOscillator()
     @soundSource.type = 'triangle'
 
     super
-    @automateFrequeny()
+    @automateFrequeny(freqs)
 
-  automateFrequeny: () ->
-    freqs = @settings.frequencies
-    freq = freqs[randomRange 0, freqs.length]
+  automateFrequeny: (freqs) ->
+    freq = freqs[randomRange 0, freqs.length - 1]
     @soundSource.frequency.setValueAtTime freq, @begin
     @soundSource.frequency.linearRampToValueAtTime freq + randomRange(-5, 5), @begin + randomRange(1, @length - 1)
     @soundSource.frequency.linearRampToValueAtTime freq, @end
