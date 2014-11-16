@@ -42,7 +42,7 @@ controllers.controller 'home', ($scope, settingsService, mobileService) ->
 
   if mobileService.isMobile
     $scope.numOfHums = $scope.options[0]
-    $scope.numOfNoises = $scope.options[0]
+    $scope.numOfNoises = $scope.options[1]
 
 
   playHum = () ->

@@ -44,7 +44,6 @@ services.factory 'settingsService', () ->
     'reverbSettings':
       'amount': 45
       'roomSize': 80
-
   }
 
 services.factory 'mobileService', () ->
@@ -57,7 +56,7 @@ services.factory 'mobileService', () ->
     /(?=.*\bAndroid\b)(?=.*\bMobile\b)/i,
     /Android/i
   ]
-  
+
   _.each matchers, (match) ->
     isMobile = true if match.test ua
 
