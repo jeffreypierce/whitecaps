@@ -2,7 +2,7 @@ controllers = angular.module 'whitecaps.controllers', ['whitecaps.services']
 
 controllers.controller 'container', ($scope) ->
   containerNode = angular.element('.container')
-  sections = ['home', 'noise', 'hum']
+  sections = ['home', 'noise', 'hum', 'effects', 'about']
   position = 0
   $scope.currentSection = sections[position]
 
@@ -26,53 +26,89 @@ controllers.controller 'container', ($scope) ->
     $scope.active = name
 
 
-controllers.controller 'home', ($scope, settingsService) ->
-  $scope.isPlaying = false
-  numberOfNotes = 2
-  numberOfNoises = 3
+controllers.controller 'home', ($scope, settingsService, mobileService) ->
+  $scope.noiseOn = false
+  $scope.humOn = false
+  $scope.options = [
+    {id: 1, name: '1'}
+    {id: 2, name: '2'}
+    {id: 3, name: '3'}
+    {id: 4, name: '4'}
+    {id: 5, name: '5'}
+  ]
+
+  $scope.numOfHums = $scope.options[1]
+  $scope.numOfNoises = $scope.options[2]
+
+  if mobileService.isMobile
+    $scope.numOfHums = $scope.options[0]
+    $scope.numOfNoises = $scope.options[0]
+
 
   playHum = () ->
-    hum = new Hum settingsService.humSettings, settingsService.frequencies
-    hum.onendCallback = playHum
-    hum.output.connect mainMix
+    play = ->
+      settings = _.extend({} ,settingsService.frequencies, settingsService.humSettings, settingsService.reverbSettings)
+      hum = new Hum settings
+      hum.onendCallback = play
+      hum.output.connect mainMix
+    i = 0
+    while i < $scope.numOfHums.id
+      play()
+      i++
 
-  playNoise = () ->
-    noise = new Noise settingsService.noiseSettings
-    noise.onendCallback = playNoise
-    noise.output.connect mainMix
+  playNoise = ->
+    play = ->
+      settings = _.extend({}, settingsService.humSettings, settingsService.reverbSettings)
+      noise = new Noise settings
+      noise.onendCallback = play
+      noise.output.connect mainMix
+    i = 0
+    while i < $scope.numOfNoises.id
+      play()
+      i++
 
-  animationLoop = () ->
+  animationLoop = ->
     spectrum.analyse()
     requestAnimationFrame animationLoop
 
-  startSound = ->
-    requestAnimationFrame animationLoop
-    i = 0
-    j = 0
-    while i < numberOfNoises
-      playNoise()
-      i++
-    while j < numberOfNotes
-      playHum()
-      j++
+  requestAnimationFrame animationLoop
 
-  stopSound = ->
+  stopHum = ->
+    _.each hums, (hum) ->
+      try
+        hum.onendCallback = ->
+        hum.soundSource.stop(context.currentTime)
+      catch e
+        window.location.reload() # hack for safari's weirdness with errors
+
+  stopNoise = ->
     _.each noises, (noise) ->
-      noise.onendCallback = () ->
-      noise.soundSource.stop()
+      try
+        noise.onendCallback = ->
+        noise.soundSource.stop(context.currentTime)
+      catch e
+        window.location.reload() # hack for safari's weirdness with errors
 
-    _.each notes, (noise) ->
-      noise.onendCallback = () ->
-      noise.soundSource.stop()
 
-  $scope.soundControl = () ->
-    if $scope.isPlaying
-      startSound()
+  $scope.humControl = ->
+    if $scope.humOn
+      playHum()
     else
-      stopSound()
+      stopHum()
+
+  $scope.noiseControl = ->
+    if $scope.noiseOn
+      playNoise()
+    else
+      stopNoise()
 
 controllers.controller 'noise', ($scope, settingsService) ->
   $scope.noises = settingsService.noiseSettings
 
 controllers.controller 'hum', ($scope, settingsService)->
   $scope.hums = settingsService.humSettings
+
+controllers.controller 'effects', ($scope, settingsService) ->
+  $scope.reverb = settingsService.reverbSettings
+
+controllers.controller 'about', ($scope)->

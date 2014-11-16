@@ -35,19 +35,17 @@ module.exports = (grunt) ->
     sass:
       dist:
         options:
-          #outputStyle: 'compressed'
-          includePaths: [
-          # quiet: true
-          # loadPath: [
-            # 'bower_components/bourbon/app/assets/stylesheets'
-            # 'bower_components/neat/app/assets/stylesheets'
-            # 'bower_components/css-modal/'
-          ]
+          outputStyle: 'compressed'
         files:
           'dist/app.css': 'app/styles/app.scss'
 
+    autoprefixer:
+      dist:
+        files:
+          'dist/app.css':'dist/app.css'
+
     watch:
-      tasks: ['coffee', 'jade', 'sass']
+      tasks: ['coffee', 'jade', 'sass', 'autoprefixer']
       files: [
           'app/**/*'
         ]
@@ -60,7 +58,6 @@ module.exports = (grunt) ->
           'dist/vendor.min.js': [
             'bower_components/jquery/dist/jquery.min.js'
             'bower_components/angular/angular.min.js'
-            'bower_components/angular-animate/angular-animate.min.js'
             'bower_components/underscore/underscore.js'
           ]
 
@@ -79,7 +76,8 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-sass'
+  grunt.loadNpmTasks 'grunt-autoprefixer'
 
-  grunt.registerTask 'default', ['coffee', 'jade', 'sass', 'uglify']
+  grunt.registerTask 'default', ['coffee', 'jade', 'sass', 'autoprefixer']
   grunt.registerTask 'vendor', ['uglify']
-  grunt.registerTask 'server', ['coffee', 'jade', 'sass', 'connect', 'watch']
+  grunt.registerTask 'server', ['default', 'connect', 'watch']

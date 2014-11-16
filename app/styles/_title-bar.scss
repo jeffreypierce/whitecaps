@@ -2,24 +2,28 @@ $barSize: 120px;
 $smallBarSize: 80px;
 
 .title-bar {
-  z-index:200;
+  z-index: 200;
   width: 100%;
   height: $barSize;
   @media screen and (max-width: 768px) {
     height: $smallBarSize;
   }
   position: absolute;
-  -webkit-perspective: 1500px;
-  -webkit-transform: translateY( -50% );
+  perspective: 1500px;
+  transform: translateY( -50% );
   top: 50%;
+  transition: opacity $animation-speed;
+  &.faded {
+    opacity: 0.3
+  }
 }
 
 .title-bar__bg {
   width: 100%;
   height: 100%;
   position: absolute;
-  -webkit-transform-style: preserve-3d;
-  -webkit-transition: -webkit-transform $animation-speed;
+  transform-style: preserve-3d;
+  transition: transform $animation-speed;
 
   figure {
     position: absolute;
@@ -27,7 +31,7 @@ $smallBarSize: 80px;
     height: $barSize;
     margin: 0;
     line-height: $barSize;
-    -webkit-transition: background-color 0.2s 0.2s, color 0.2s 0.2s;
+    transition: background-color 0.2s 0.2s, color 0.2s 0.2s;
     @media screen and (max-width: 768px) {
       height: $smallBarSize;
       line-height: $smallBarSize;
@@ -35,55 +39,66 @@ $smallBarSize: 80px;
     }
     text-align: center;
     font-size: 3em;
-    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 
-    -webkit-transform: translateZ( -$barSize/2 );
+    transform: translateZ( -$barSize/2 );
     @media screen and (max-width: 768px) {
-      -webkit-transform: translateZ( -$smallBarSize/2 );
+      transform: translateZ( -$smallBarSize/2 );
 
     }
   }
  .title-bar--front  {
-    -webkit-transform: translateZ( $barSize/2 );
+    transform: translateZ( $barSize/2 );
     @media screen and (max-width: 768px) {
-      -webkit-transform: translateZ( $smallBarSize/2 );
+      transform: translateZ( $smallBarSize/2 );
     }
   }
  .title-bar--top {
-    -webkit-transform: rotateX( 90deg ) translateZ( $barSize/2 ) ;
+    transform: rotateX( 90deg ) translateZ( $barSize/2 ) ;
     @media screen and (max-width: 768px) {
-      -webkit-transform: rotateX( 90deg ) translateZ( $smallBarSize/2 ) ;
+      transform: rotateX( 90deg ) translateZ( $smallBarSize/2 ) ;
     }
   }
   &.title-bar--show-top {
-    -webkit-transform: translateZ( -$barSize/2 ) rotateX( -90deg );
+    transform: translateZ( -$barSize/2 ) rotateX( -90deg );
     @media screen and (max-width: 768px) {
-      -webkit-transform: translateZ( -$smallBarSize/2 ) rotateX( -90deg );
+      transform: translateZ( -$smallBarSize/2 ) rotateX( -90deg );
     }
   }
 }
 .title-bar__prev, .title-bar__next {
   position: absolute;
-  width: 100px;
-  height: 100%;
+  width: 64px;
   cursor: pointer;
   opacity: 0.3;
   z-index: 100;
 }
 .title-bar__next {
+  @media screen and (max-width: 768px) {
+    right: 0;
+  }
   right: 20px;
-  -webkit-transition: background-color $animation-speed, right $animation-speed, opacity $animation-speed;
+  transition: background-color $animation-speed, right $animation-speed, opacity $animation-speed;
   &:hover{
-    right: 10px;
+    @media screen and (max-width: 768px) {
+      right: -5px;
+    }
+    right: 15px;
     opacity:1;
   }
 }
 
 .title-bar__prev {
+  @media screen and (max-width: 768px) {
+    left: 0px
+  }
   left: 20px;
-  -webkit-transition: background-color $animation-speed, left $animation-speed, opacity $animation-speed;
+  transition: background-color $animation-speed, left $animation-speed, opacity $animation-speed;
   &:hover {
-    left: 10px;
+    @media screen and (max-width: 768px) {
+      left: -5px;
+    }
+    left: 15px;
     opacity: 1;
   }
 }
@@ -97,6 +112,11 @@ $smallBarSize: 80px;
 .title-bar__chevron {
   width: 32px;
   height: 32px;
+  @media screen and (max-width: 768px) {
+    width: 24px;
+    height: 24px;
+  }
+
 }
 
 .home {
@@ -111,9 +131,9 @@ $smallBarSize: 80px;
   }
   .title-bar__prev, .title-bar__next {
     background-color: $home-faded;
-    &:hover {
-      background-color: $white;
-    }
+    // &:hover {
+    //   background-color: $white;
+    // }
   }
   .title-bar__chevron {
     fill: $home;
@@ -133,9 +153,9 @@ $smallBarSize: 80px;
   }
   .title-bar__prev, .title-bar__next {
     background-color: $noise-faded;
-    &:hover {
-      background-color: $white;
-    }
+    // &:hover {
+    //   background-color: $white;
+    // }
   }
   .title-bar__chevron {
     fill: $noise;
@@ -155,11 +175,33 @@ $smallBarSize: 80px;
   }
   .title-bar__prev, .title-bar__next {
     background-color: $hum-faded;
-    &:hover {
-      background-color: $white;
-    }
+    // &:hover {
+    //   background-color: $white;
+    // }
   }
   .title-bar__chevron {
     fill: $hum;
+  }
+}
+
+.effects {
+  .title-bar__bg{
+     figure {
+      color: $effects;
+      background-color: $effects-faded;
+
+    }
+    &.title-bar--show-top figure {
+      background-color: $white;
+    }
+  }
+  .title-bar__prev, .title-bar__next {
+    background-color: $effects-faded;
+    // &:hover {
+    //   background-color: $white;
+    // }
+  }
+  .title-bar__chevron {
+    fill: $effects;
   }
 }

@@ -5,3 +5,16 @@ mixin chevron(pos)
   else
     svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 8 8', class="title-bar__chevron")
       path(d='M1.5 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z', transform='translate(1)' )
+
+mixin titleBar(title)
+  .title-bar
+    .title-bar__bg(ng-class="{'title-bar--show-top': active != ''}")
+      figure.title-bar--front
+        .title-bar__prev
+          +chevron('r')
+        .title-bar__title= title
+        .title-bar__next
+          +chevron('l')
+
+      figure.title-bar--top
+        span.title-bar__title {{ active }}

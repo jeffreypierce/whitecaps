@@ -1,3 +1,4 @@
+
 window.AudioContext = window.AudioContext || window.webkitAudioContext
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
@@ -7,9 +8,10 @@ window.requestAnimationFrame = window.requestAnimationFrame ||
 window.cancelAnimationFrame = window.cancelAnimationFrame ||
   window.mozCancelAnimationFrame
 
-context = new AudioContext()
-spectrum = new Spectrum(context)
-mainMix = context.createGain()
+
+window.context = new AudioContext()
+window.spectrum = new Spectrum(context)
+window.mainMix = context.createGain()
 
 mainMix.connect spectrum.analyser
 mainMix.connect context.destination

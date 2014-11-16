@@ -5,7 +5,9 @@ html
     meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
     title
       | Whitecaps
-    meta(name='viewport', content='width=device-width')
+    meta(name="viewport", content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no")
+    meta(name="apple-mobile-web-app-capable", content="yes")
+    meta(name="mobile-web-app-capable", content="yes")
     link(rel='shortcut icon', type="image/x-icon", href='/favicon.ico')
     link(rel='stylesheet', href='app.css')
     script(src='vendor.min.js')
@@ -14,52 +16,57 @@ html
     include _mixins.jade
     .container(ng-controller="container" ng-class="currentSection")
 
-
       section(ng-controller="home" class="home")
-        .title-bar
+        .title-bar(ng-class="{'faded': humOn == true || noiseOn == true}")
           .title-bar__bg
             figure.title-bar--front
               .title-bar__title
                   .whitecaps.play WHITECAPS
               .title-bar__next
                 +chevron('l')
-        canvas(width="1024", height="768")
-        .play-section
-          input#play.switch(type="checkbox", ng-model="isPlaying", ng-change="soundControl()")
-          label.switch__label(for="play")
 
+        canvas(width="1024", height="768")
+
+        .switch-section
+          input#noiseSwitch.switch(type="checkbox", ng-model="noiseOn", ng-change="noiseControl()")
+          label.switch__label.switch--noise(for="noiseSwitch")
+          select.switch__select(ng-model="numOfNoises", ng-options="o.name for o in options", ng-disabled="noiseOn")
+
+            
+        .switch-section.lower 
+          input#humSwitch.switch(type="checkbox", ng-model="humOn", ng-change="humControl()")
+          label.switch__label.switch--hum(for="humSwitch")
+          select.switch__select(ng-model="numOfHums", ng-options="o.name for o in options", ng-disabled="humOn")
+  
       section(ng-controller="noise" class="noise")
         .control-bar
           slider(ng-repeat="(name, noise) in noises", model="noise", active="setActive(name)", deactive="setActive('')")
 
-        .title-bar
-          .title-bar__bg(ng-class="{'title-bar--show-top': active != ''}")
-            figure.title-bar--front
-              .title-bar__prev
-                +chevron('r')
-              .title-bar__title noise
-              .title-bar__next
-                +chevron('l')
-
-            figure.title-bar--top
-              span.title-bar__title {{ active }}
+        +titleBar("noise")
 
       section(ng-controller="hum" class="hum")
         .control-bar
           slider(ng-repeat="(name, hum) in hums", model="hum", active="setActive(name)", deactive="setActive('')")
 
-        .title-bar
-          .title-bar__bg(ng-class="{'title-bar--show-top': active != ''}")
-            figure.title-bar--front
-              .title-bar__prev
-                +chevron('r')
-              .title-bar__title hum
-              .title-bar__next
-                +chevron('l')
+        +titleBar("hum")
 
-            figure.title-bar--top
-              span.title-bar__title {{ active }}
+      section(ng-controller="effects" class="effects")
+        dial.top(model="reverb.amount", active="setActive('amount')", deactive="setActive('')")
+        dial.bottom(model="reverb.roomSize", active="setActive('room size')", deactive="setActive('')")
 
+        +titleBar("reverb")
+
+      section(ng-controller="about" class="about")
+        .about__body 
+          p 
+           span.caps WHITECAPS 
+           | is an aleatoric, generative noise machine built with the web audio api.
+          p While it works in most modern browsers,
+            | it is currently fairly processer intensive. You might hear some distortion if you add too many voices, especially on mobile devices.
+          p.footer 
+           a.left(href="http://github.com/jeffreypierce/whitecaps") v0.1.0
+           a.right(href="http://jeffreypierce.net") built by jeffrey
+        +titleBar("")
       nav
         ul
           li.home

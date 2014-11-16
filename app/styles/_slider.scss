@@ -1,7 +1,7 @@
 .control-bar {
   position: absolute;
-  -webkit-transform: translateY( -50% ) translateX( -50% );
-  -webkit-transition: left $animation-speed;
+  transform: translateY( -50% ) translateX( -50% );
+  transition: left $animation-speed;
   top: 50%;
   left: 50%;
   width: 480px;
@@ -16,7 +16,7 @@
   width: 120px;
   float: left;
   height: 600px;
-  -webkit-transition: background-color $animation-speed;
+  transition: background-color $animation-speed;
   @media screen and (max-width: 768px) {
     height: 400px;
     width: 80px;
@@ -31,7 +31,7 @@
 
 .slider__handle-min, .slider__handle-max {
 
-  -webkit-transition: background-color $animation-speed;
+  transition: background-color $animation-speed;
   position: absolute;
   width: 100%;
 }

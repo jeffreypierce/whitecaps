@@ -4,6 +4,8 @@ directives.directive 'dial', ($document) ->
   restrict: "E"
   scope:
     model: "="
+    active: "&"
+    deactive: "&"
   replace: true
   template: """
     <div class="dial" ng-class="{over: model > 50}">
@@ -11,21 +13,23 @@ directives.directive 'dial', ($document) ->
       <div class="circle fill"></div>
       <div class="mask"></div>
       <div class="center">
-        <div class="value">{{model}}<div>
+        <div class="display"></div>
       </div>
     </div>
     """
   link: (scope, element, attrs) ->
-    display = angular.element('.display')
+    titleBar = angular.element '.title-bar'
+    center = element.find '.center'
+    display = element.find '.display'
     element.on 'mousedown touchstart', (e) ->
       e.preventDefault()
       downY = e.pageY ? e.originalEvent.touches[0].pageY
+      scope.$apply scope.active
 
       $document.on 'mousemove touchmove', (e) ->
         currentY = e.pageY ? e.originalEvent.touches[0].pageY
         distanceY = currentY - downY
-        scaleFactor = Math.floor(Math.log(Math.abs(distanceY) + 1) /
-          Math.LN10) + 1
+        scaleFactor = Math.floor(Math.log(Math.abs(distanceY) + 1) / Math.LN10) + 1
 
         if currentY > downY
           scope.model = if scope.model < 100 -
@@ -35,13 +39,37 @@ directives.directive 'dial', ($document) ->
             scaleFactor then scope.model - scaleFactor else 0
         scope.$apply ()-> scope.model
         deg = Math.round(scope.model * 0.01 * 360)
-        display.css 'webkitTransform', "rotate(#{deg}deg)"
+        display.css 'transform', "rotate(#{deg}deg)"
 
         downY = currentY
 
         $document.bind 'mouseup touchend', (e) ->
           $document.unbind 'mousemove touchmove'
           $document.unbind 'mouseup touchend'
+          scope.$apply scope.deactive
+
+    circleSize = () ->
+      docHeight = $document.height()
+      size =  docHeight / 3
+      position = (docHeight / 4 - size / 2 ) - titleBar.height() / 4
+      thickness = size / 2
+
+      element.width size
+      element.height size
+
+      center.width size - thickness
+      center.height size - thickness
+
+      if element.hasClass "top"
+        element.css 'top', position
+      else if element.hasClass "bottom"
+        element.css 'bottom', position
+
+    circleSize()
+    lazyResize = _.debounce circleSize, 100
+
+    $(window).on 'resize', (e) ->
+      lazyResize()
 
 directives.directive 'slider', ($document) ->
   restrict: "E"
@@ -100,7 +128,7 @@ directives.directive 'slider', ($document) ->
 
 
     setInitialValues = () ->
-      maxHeight = $document.height() - 100
+      maxHeight = $document.height() - 50
       titleBarHeight = titleBar.height()
       scaledHeight = maxHeight - titleBarHeight - 48
       element.css 'height', maxHeight + "px"
@@ -112,19 +140,16 @@ directives.directive 'slider', ($document) ->
       # hack for scales that cross the zero boundry
       # TODO - find less coupled solution
       if scope.model.scale[0] < 0
-        minY = minY / 2
+        minY = (scaledHeight - minY) / 2
         maxY = maxY / 2
 
       handles[0].css 'top', maxY + 'px'
       handles[1].css 'bottom', minY + 'px'
 
-      console.log minY
-
     getY = (e) ->
-      (e.pageY ? e.originalEvent.touches[0].pageY) - 50
+      (e.pageY ? e.originalEvent.touches[0].pageY) - 25
 
     updateValues = (y, index) ->
-      console.log 'update'
       position = 'top'
       if index == 1
         y = maxHeight - y
@@ -154,6 +179,7 @@ directives.directive 'slider', ($document) ->
         unbindHandles()
         $document.on 'mousemove touchmove', (e) ->
           updateValues getY(e), index
+
           unbindHandles()
 
     bindHandles 0
