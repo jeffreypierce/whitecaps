@@ -8,7 +8,7 @@ module.exports = (grunt) ->
         options:
           join: true
         files:
-          'dist/app.js': [
+          'js/app.js': [
             'app/scripts/spectrum.coffee'
             'app/scripts/audio.coffee'
             'app/scripts/whitecap.coffee'
@@ -31,18 +31,18 @@ module.exports = (grunt) ->
           data:
             debug: false
         files:
-          'dist/index.html': ['app/views/index.jade']
+          'index.html': ['app/views/index.jade']
     sass:
       dist:
         options:
           outputStyle: 'compressed'
         files:
-          'dist/app.css': 'app/styles/app.scss'
+          'css/app.css': 'app/styles/app.scss'
 
     autoprefixer:
       dist:
         files:
-          'dist/app.css':'dist/app.css'
+          'css/app.css':'css/app.css'
 
     watch:
       tasks: ['coffee', 'jade', 'sass', 'autoprefixer']
@@ -55,7 +55,7 @@ module.exports = (grunt) ->
     uglify:
       my_target:
         files:
-          'dist/vendor.min.js': [
+          'js/vendor.min.js': [
             'bower_components/jquery/dist/jquery.min.js'
             'bower_components/angular/angular.min.js'
             'bower_components/underscore/underscore.js'
@@ -66,7 +66,7 @@ module.exports = (grunt) ->
       server:
         options:
           port: 8888
-          base: 'dist'
+          base: ''
 
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
