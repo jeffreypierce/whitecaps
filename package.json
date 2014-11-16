@@ -1,7 +1,7 @@
 {
   "name": "whitecaps",
   "version": "0.1.0",
-  "description": "ERROR: No README.md file found!",
+  "description": "Aleatoric Noise Machine",
   "main": "index.html",
   "dependencies": {
     "grunt": "~0.4.2",
@@ -16,10 +16,7 @@
     "grunt-contrib-connect": "~0.7.1",
     "grunt-contrib-copy": "~0.5.0"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": "",
+  "repository": "https://github.com/jeffreypierce/whitecaps",
   "author": "jeffrey@jeffreypierce.net",
-  "license": "BSD"
+  "license": "GNU - GPL"
 }

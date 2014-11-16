@@ -1,6 +1,6 @@
 {
   "name": "whitecaps",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "authors": [
     "Jeffrey Pierce <jeffrey@jeffreypierce.net>"
   ],
@@ -14,7 +14,6 @@
   ],
   "dependencies": {
     "angular": "~1.2.21",
-    "angular-animate": "~1.2.21",
     "jquery": "~2.1.1",
     "underscore": "~1.6.0"
   },
@@ -26,6 +25,6 @@
     "noise",
     "machine"
   ],
-  "homepage": "whitecaps.io",
+  "homepage": "http://whitecaps.io",
   "private": true
 }
