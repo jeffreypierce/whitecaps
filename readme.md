@@ -20,4 +20,5 @@ _____
 * Application icons for 'Add to Home Screen'
 * Find a friend with an Android, and test it
 * More efficient reverb
+* Presets and saved settings
 * your suggestions?
